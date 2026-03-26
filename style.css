@@ -58,6 +58,16 @@ section {
   margin: 0 auto;
 }
 
+.sol-span {
+  color: white;
+  background: var(--fg);
+  font-weight: 600;
+  padding: 6px 14px;
+  border-radius: 999px;
+  display: inline-block;
+  letter-spacing: 0.5px;
+}
+
 /* Sticky Layout */
 .sticky {
   display: flex;
@@ -255,8 +265,6 @@ section {
   animation: blinkCursor 0.8s steps(1) infinite;
 }
 
-
-
 @keyframes blinkCursor {
   0%,
   50% {
@@ -273,7 +281,6 @@ section {
   height: 200vh; /* controls scroll length */
   background: black;
   padding: 0;
-  
 }
 
 #video-canvas {
@@ -339,59 +346,63 @@ section {
 }
 
 .intro {
-    position: relative;
-    overflow: hidden;
+  position: relative;
+  overflow: hidden;
 }
 
 .intro h1 {
-    position: relative;
-    z-index: 5;
-    width: 40%;
-    top: -33%;
+  position: relative;
+  z-index: 5;
+  width: 40%;
+  top: -33%;
 }
 
 .intro-image {
-    position: absolute;
-    will-change: transform;
-    pointer-events: none;
-   
+  position: absolute;
+  will-change: transform;
+  pointer-events: none;
 }
 
 .intro-image img {
-    display: block;
-    width: 100%;
-    height: auto;
-    object-fit: contain;
+  display: block;
+  width: 100%;
+  height: auto;
+  object-fit: contain;
 }
 
 /* Final size + final position = your "actual size" */
 .img-1 {
-    width:50vw;
-    top: 20%;
-    left: 25%;
+  width: 50vw;
+  top: 20%;
+  left: 25%;
 }
 
 .img-2 {
-    width: 25vw;
-    bottom: -20%;
-    right: 24%;
+  width: 25vw;
+  bottom: -20%;
+  right: 24%;
 }
 
 .img-3 {
-    width:25vw;
-    top: 65%;
-    right: 53%;
+  width: 25vw;
+  top: 65%;
+  right: 53%;
 }
 
 
+
 .buy-btn {
-  display: inline-block;
-  margin-top: 2rem;
-  padding: 0.9rem 2rem;
+  /* display: inline-block; */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* margin-top: 2rem; */
+  margin: auto;
+  padding: 1.5rem 1.5rem;
   background: var(--fg);
   color: var(--bg);
   text-decoration: none;
-  font-size: 2rem;
+  font-size: 1.6rem;
   border-radius: 999px;
   transition: all 0.3s ease;
   position: relative;
@@ -411,7 +422,6 @@ section {
   transition: transform 0.3s ease;
   text-align: center;
   align-content: center;
-
 }
 
 .buy-btn:hover span {
@@ -419,74 +429,74 @@ section {
 }
 
 @media (max-width: 1000px) {
-    h1 {
-        font-size: 3rem;
-    }
+  h1 {
+    font-size: 3rem;
+  }
 
-    .intro h1,
-    .outro h1 {
-        width: 100%;
-    }
+  .intro h1,
+  .outro h1 {
+    width: 100%;
+  }
 
-    .intro h1 {
-        font-size: 5rem;
-        top: -20%;
-    }
+  .intro h1 {
+    font-size: 5rem;
+    top: -20%;
+  }
 
-    .sticky {
-        justify-content: center;
-        align-items: center;
-        overflow: hidden;
-    }
+  .sticky {
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+  }
 
-    .sticky-header {
-        position: absolute;
-        top: 18%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        margin-bottom: 0;
-        z-index: 20;
-        width: 100%;
-        padding: 0 1rem;
-    }
+  .sticky-header {
+    position: absolute;
+    top: 18%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    margin-bottom: 0;
+    z-index: 20;
+    width: 100%;
+    padding: 0 1rem;
+  }
 
-    .sticky-header h1 {
-        text-align: center;
-    }
+  .sticky-header h1 {
+    text-align: center;
+  }
 
-    .card-container {
-        position: relative;
-        width: 100%;
-        height: 62vh;
-        display: block;
-     
-        overflow: hidden;
-        padding: 0;
-    }
+  .card-container {
+    position: relative;
+    width: 100%;
+    height: 62vh;
+    display: block;
 
-    .card {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        width: min(78vw, 320px);
-        aspect-ratio: 5 / 7;
-        margin: 0;
-        border-radius: 20px !important;
-        transform-style: preserve-3d;
-        will-change: transform, opacity;
-        padding: 0;
-    }
+    overflow: hidden;
+    padding: 0;
+  }
 
-    .card-front {
-        display: none;
-    }
+  .card {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: min(78vw, 320px);
+    aspect-ratio: 5 / 7;
+    margin: 0;
+    border-radius: 20px !important;
+    transform-style: preserve-3d;
+    will-change: transform, opacity;
+    padding: 0;
+  }
 
-    .card-back {
-        display: flex;
-        transform: rotateY(0deg);
-        backface-visibility: visible;
-        border-radius: 20px !important;
-    }
+  .card-front {
+    display: none;
+  }
+
+  .card-back {
+    display: flex;
+    transform: rotateY(0deg);
+    backface-visibility: visible;
+    border-radius: 20px !important;
+  }
 
   .card-back span {
     top: 1.25rem;
@@ -527,31 +537,31 @@ section {
     margin-right: auto;
   }
   .intro h1 {
-        width: 100%;
-        font-size: 3rem;
-        z-index: 50;
-    }
+    width: 100%;
+    font-size: 3rem;
+    z-index: 50;
+  }
 
-    .img-1 {
-        width: 460px;
-        top: 40%;
-        left: -8%;
-        z-index: 5;
-    }
+  .img-1 {
+    width: 460px;
+    top: 40%;
+    left: -8%;
+    z-index: 5;
+  }
 
-    .img-2 {
-        width: 320px;
-        bottom: -14%;
-        right: 36%;
-    }
+  .img-2 {
+    width: 320px;
+    bottom: -14%;
+    right: 36%;
+  }
 
-    .img-3 {
-        width: 310px;
-        top: 73%;
-        right: -8%;
-    }
-  
-    .buy-btn {
+  .img-3 {
+    width: 310px;
+    top: 73%;
+    right: -8%;
+  }
+
+  .buy-btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -563,6 +573,4 @@ section {
     left: 50%;
     transform: translateX(-80%);
   }
-
 }
-

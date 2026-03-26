@@ -68,7 +68,7 @@ document.addEventListener("DOMContentLoaded", () => {
       start: "top top",
       end: "+=160%",
       pin: true,
-      scrub: 1.2,
+      scrub: 2.2,
       invalidateOnRefresh: true,
       onUpdate: (self) => {
         const progress = self.progress;
