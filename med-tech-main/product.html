@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Product Details</title>
+  <link rel="stylesheet" href="./product.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+</head>
+
+<body>
+  <header class="topbar">
+    <a href="./collection.html" class="brand">MedTech</a>
+
+    <a href="./cart.html" class="cart-icon-wrap" aria-label="Open cart">
+      <span class="cart-icon">🛒</span>
+      <span class="cart-count" id="cart-count">0</span>
+    </a>
+  </header>
+
+  <main class="product-page">
+    <section class="product-hero">
+      <a href="./collection.html" class="back-link">← Back to Collection</a>
+
+      <div class="product-layout">
+        <div class="product-visual">
+          <div class="visual-glow"></div>
+          <div class="visual-card">
+            <span id="discount-badge" class="product-badge"></span>
+            <img id="product-image" src="assets/images/product-1.png" alt="Product image" />
+          </div>
+        </div>
+
+        <div class="product-info">
+          <p class="product-kicker">Premium Recovery Formula</p>
+          <h1 id="product-title">Relief Oil</h1>
+          <p id="product-description" class="product-description"></p>
+
+          <div class="price-row">
+            <span id="old-price" class="old-price">₹999</span>
+            <span id="new-price" class="new-price">₹699</span>
+          </div>
+
+          <div class="size-block">
+            <h3>Available Sizes</h3>
+            <div id="size-options" class="size-options"></div>
+          </div>
+
+          <div class="cta-row">
+            <button class="primary-btn" id="add-to-cart-btn">Add to Cart</button>
+            <button class="secondary-btn" id="buy-now-btn">Buy Now</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="story-section">
+      <div class="story-pin-wrap">
+        <div class="story-left">
+          <p class="mini-label">Crafted For Recovery</p>
+          <h2>Prepared with layered ingredients and a premium process</h2>
+
+          <div class="story-steps">
+            <div class="story-step active">
+              <span>01</span>
+              <div>
+                <h3>Botanical Base</h3>
+                <p>
+                  The formula starts with selected plant-based carriers that help create a smooth,
+                  skin-friendly, non-sticky application.
+                </p>
+              </div>
+            </div>
+
+            <div class="story-step">
+              <span>02</span>
+              <div>
+                <h3>Active Herbal Blend</h3>
+                <p>
+                  Herbal extracts and essential actives are layered in to build a more comforting
+                  and balanced product experience.
+                </p>
+              </div>
+            </div>
+
+            <div class="story-step">
+              <span>03</span>
+              <div>
+                <h3>Cooling Finish</h3>
+                <p>
+                  Cooling agents and aroma notes complete the blend, giving the product its fresh,
+                  premium feel and recovery-first identity.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="story-right">
+          <div class="floating-stage">
+            <div class="floating-card card-a tilt-card">
+              <img src="assets/images/cover-01.jpg" alt="Botanical extracts">
+              <div class="floating-card-content">
+                <h4>Botanical Extracts</h4>
+                <p>Clean herbal foundation</p>
+              </div>
+            </div>
+
+            <div class="floating-card card-b tilt-card">
+              <img src="assets/images/cover-02.jpg" alt="Purifying oils">
+              <div class="floating-card-content">
+                <h4>Purifying Oils</h4>
+                <p>Balanced comfort blend</p>
+              </div>
+            </div>
+
+            <div class="floating-card card-c tilt-card">
+              <img src="assets/images/cover-03.jpg" alt="Cooling actives">
+              <div class="floating-card-content">
+                <h4>Cooling Actives</h4>
+                <p>Fresh recovery finish</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section">
+      <div class="section-heading">
+        <p class="mini-label">What’s Inside</p>
+        <h2>Thoughtfully prepared for a premium feel</h2>
+      </div>
+
+      <div class="ingredient-layout">
+        <div class="card-block ingredient-text">
+          <p id="ingredients-text"></p>
+        </div>
+
+        <div class="ingredient-gallery">
+          <div class="ingredient-panel tilt-card large-panel">
+            <img src="assets/images/cover-01.jpg" alt="Ingredient image 1">
+          </div>
+          <div class="ingredient-panel tilt-card">
+            <img src="assets/images/cover-02.jpg" alt="Ingredient image 2">
+          </div>
+          <div class="ingredient-panel tilt-card">
+            <img src="assets/images/cover-03.jpg" alt="Ingredient image 3">
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="reviews-section">
+      <div class="section-heading">
+        <p class="mini-label">Customer Reviews</p>
+        <h2>Loved by people who use it daily</h2>
+      </div>
+
+      <div class="reviews-grid">
+        <article class="review-card tilt-card">
+          <div class="stars">★★★★★</div>
+          <h3>Amazing relief</h3>
+          <p>“The texture feels premium and the soothing effect is very quick. I keep it with me every day.”</p>
+          <span>- Priya S.</span>
+        </article>
+
+        <article class="review-card tilt-card">
+          <div class="stars">★★★★★</div>
+          <h3>Really works well</h3>
+          <p>“I liked how fast it absorbs and the fragrance is not too strong. Feels clean and effective.”</p>
+          <span>- Rohan M.</span>
+        </article>
+
+        <article class="review-card tilt-card">
+          <div class="stars">★★★★★</div>
+          <h3>Premium quality</h3>
+          <p>“The packaging and finish feel premium and the product itself gives a really calming effect.”</p>
+          <span>- Neha K.</span>
+        </article>
+      </div>
+    </section>
+
+    <section class="suggested-section">
+      <div class="section-heading">
+        <p class="mini-label">You May Also Like</p>
+        <h2>Suggested Products</h2>
+      </div>
+
+      <div class="suggested-grid" id="suggested-grid"></div>
+    </section>
+  </main>
+
+  <script src="./product.js"></script>
+</body>
+
+</html>

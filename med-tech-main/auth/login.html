@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+    <link rel="stylesheet" href="auth.css">
+</head>
+
+<body>
+
+
+    <div class="auth-bg">
+        <img src="/images/amlaBg.png">
+        <div class="auth-overlay"></div>
+
+        <div class="auth-card">
+            <h1 class="auth-title">Login</h1>
+
+            <form id="login-form">
+                <div class="auth-group">
+                    <label>Email</label>
+                    <input type="email" id="email">
+                </div>
+
+                <div class="auth-group">
+                    <label>Password</label>
+                    <input type="password" id="password">
+                </div>
+
+                <div class="auth-forgot">Forgot password?</div>
+
+                <button id="login-btn" type="submit" class="auth-btn">Login</button>
+            </form>
+
+            <p id="message" class="auth-message"></p>
+
+            <div class="auth-social-text">or Login using</div>
+
+            <div class="auth-social">
+                <img src="google.png" class="auth-icon" onclick="googleLogin()" width="40px" height="40px">
+            </div>
+
+            <div class="auth-link" onclick="location.href='signup.html'">
+                SIGN UP
+            </div>
+        </div>
+    </div>
+
+    <script src="login.js"></script>
+</body>
+
+</html>
