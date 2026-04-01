@@ -1,7 +1,11 @@
 gsap.registerPlugin(ScrollTrigger);
 
 document.addEventListener("DOMContentLoaded", () => {
-  const lenis = new Lenis();
+  const lenis = new Lenis({
+    duration: 1.4,
+    easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+    smoothWheel: true,
+  });
 
   lenis.on("scroll", ScrollTrigger.update);
   gsap.ticker.add((time) => {
@@ -30,6 +34,69 @@ document.addEventListener("DOMContentLoaded", () => {
   const FLOW_START = 0.78;
   const FLOW_END = 1.0;
   const FLIP_TRIGGER = 0.5;
+
+  // --- Smooth lerp utility for flow rendering ---
+  function lerp(a, b, t) {
+    return a + (b - a) * t;
+  }
+
+function createAccountButtonAnimation() {
+  const accountBtn = document.querySelector(".account-btn");
+  const intro = document.querySelector(".intro");
+
+  if (!accountBtn || !intro) return;
+
+  gsap.set(accountBtn, {
+    y: -20,
+    opacity: 0,
+    filter: "blur(6px)",
+  });
+
+  const mm = gsap.matchMedia();
+
+  mm.add("(max-width: 999px)", () => {
+    // Mobile: intro hits viewport sooner, so trigger fires earlier
+    ScrollTrigger.create({
+      trigger: intro,
+      start: "top -40%",
+      end: "top 20%",
+      scrub: 2.5,
+      // markers: true,
+      onUpdate: (self) => {
+        const eased = gsap.parseEase("power2.out")(self.progress);
+        gsap.to(accountBtn, {
+          y: gsap.utils.interpolate(-20, 0, eased),
+          opacity: eased,
+          filter: `blur(${gsap.utils.interpolate(6, 0, eased)}px)`,
+          duration: 0.6,
+          ease: "power2.out",
+          overwrite: true,
+        });
+      },
+    });
+  });
+
+  mm.add("(min-width: 1000px)", () => {
+    // Desktop: original values
+    ScrollTrigger.create({
+      trigger: intro,
+      start: "top -85%",
+      end: "top 20%",
+      scrub: 2.5,
+      onUpdate: (self) => {
+        const eased = gsap.parseEase("power2.out")(self.progress);
+        gsap.to(accountBtn, {
+          y: gsap.utils.interpolate(-20, 0, eased),
+          opacity: eased,
+          filter: `blur(${gsap.utils.interpolate(6, 0, eased)}px)`,
+          duration: 0.6,
+          ease: "power2.out",
+          overwrite: true,
+        });
+      },
+    });
+  });
+}
 
   function createHeroAnimation() {
     if (!hero || !heroBox || !heroWord || !heroCursor) return;
@@ -76,7 +143,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const minHeight = 0;
         const maxHeight = window.innerHeight;
-        const currentHeight = gsap.utils.interpolate(minHeight, maxHeight, eased);
+        const currentHeight = gsap.utils.interpolate(
+          minHeight,
+          maxHeight,
+          eased,
+        );
 
         gsap.set(heroBox, {
           height: `${currentHeight}px`,
@@ -85,13 +156,13 @@ document.addEventListener("DOMContentLoaded", () => {
         const segment = 1 / heroWords.length;
         const currentWordIndex = Math.min(
           heroWords.length - 1,
-          Math.floor(progress / segment)
+          Math.floor(progress / segment),
         );
 
         const localProgress = gsap.utils.clamp(
           0,
           1,
-          (progress - currentWordIndex * segment) / segment
+          (progress - currentWordIndex * segment) / segment,
         );
 
         const activeWord = heroWords[currentWordIndex];
@@ -160,41 +231,9 @@ document.addEventListener("DOMContentLoaded", () => {
       },
     });
 
-    introTl.to(
-      img1,
-      {
-        scale: 1,
-        x: 0,
-        y: 0,
-        rotation: 0,
-        ease: "none",
-      },
-      0
-    );
-
-    introTl.to(
-      img2,
-      {
-        scale: 1,
-        x: 0,
-        y: 0,
-        rotation: 0,
-        ease: "none",
-      },
-      0
-    );
-
-    introTl.to(
-      img3,
-      {
-        scale: 1,
-        x: 0,
-        y: 0,
-        rotation: 0,
-        ease: "none",
-      },
-      0
-    );
+    introTl.to(img1, { scale: 1, x: 0, y: 0, rotation: 0, ease: "none" }, 0);
+    introTl.to(img2, { scale: 1, x: 0, y: 0, rotation: 0, ease: "none" }, 0);
+    introTl.to(img3, { scale: 1, x: 0, y: 0, rotation: 0, ease: "none" }, 0);
   }
 
   function createExtraCard(id, title, text) {
@@ -224,7 +263,9 @@ document.addEventListener("DOMContentLoaded", () => {
       ["card-9", "Card Information9", "This is the card back content9."],
     ];
 
-    extraCards = data.map(([id, title, text]) => createExtraCard(id, title, text));
+    extraCards = data.map(([id, title, text]) =>
+      createExtraCard(id, title, text),
+    );
     extraCards.forEach((card) => cardContainer.appendChild(card));
   }
 
@@ -292,7 +333,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     originals.forEach((selector) => {
       gsap.set(selector, {
-        clearProps: "position,left,top,width,height,margin,flex,xPercent,yPercent",
+        clearProps:
+          "position,left,top,width,height,margin,flex,xPercent,yPercent",
       });
     });
 
@@ -343,7 +385,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const curve = 18;
     const rotateFactor = 9;
     const visibleRange = 2.35;
-    const travel = progress * extraCards.length;
+
+    // Smoother eased progress for flow travel
+    const easedProgress = gsap.parseEase("power2.inOut")(progress / 2) * 2;
+    const travel = easedProgress * extraCards.length;
 
     allCards.forEach((card, i) => {
       const slot = i - 1 - travel;
@@ -353,13 +398,25 @@ document.addEventListener("DOMContentLoaded", () => {
       const rotationZ = slot * rotateFactor;
 
       const scale = Math.max(CARD_MIN_SCALE, CARD_MAX_SCALE - absSlot * 0.1);
-      const opacity = absSlot <= visibleRange ? 1 : 0;
+
+      // Smooth opacity fade at edges using a soft step
+      const opacityRaw = absSlot <= visibleRange ? 1 : 0;
+      const opacitySmooth =
+        absSlot <= visibleRange - 0.35
+          ? 1
+          : absSlot <= visibleRange
+            ? gsap.utils.clamp(
+                0,
+                1,
+                1 - (absSlot - (visibleRange - 0.35)) / 0.35,
+              )
+            : 0;
 
       gsap.set(card, {
         x,
         y,
         scale,
-        opacity,
+        opacity: opacitySmooth,
         rotationY: card.classList.contains("extra-card") ? 0 : 180,
         rotationZ,
         zIndex: 100 - Math.round(absSlot * 10),
@@ -369,15 +426,8 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function setupMobileCardsInitialState() {
-    gsap.set(stickyHeader, {
-      y: 40,
-      opacity: 0,
-    });
-
-    gsap.set(cardContainer, {
-      width: "100%",
-    });
-
+    gsap.set(stickyHeader, { y: 40, opacity: 0 });
+    gsap.set(cardContainer, { width: "100%" });
     gsap.set(["#card-1", "#card-2", "#card-3"], {
       rotationY: 0,
       borderRadius: "20px",
@@ -394,7 +444,6 @@ document.addEventListener("DOMContentLoaded", () => {
       opacity: 1,
       zIndex: 1,
     });
-
     gsap.set("#card-2", {
       x: 0,
       y: 0,
@@ -403,7 +452,6 @@ document.addEventListener("DOMContentLoaded", () => {
       opacity: 1,
       zIndex: 3,
     });
-
     gsap.set("#card-3", {
       x: 120,
       y: 8,
@@ -447,16 +495,32 @@ document.addEventListener("DOMContentLoaded", () => {
         state = {
           x: gsap.utils.interpolate(positions[0].x, positions[1].x, t),
           y: gsap.utils.interpolate(positions[0].y, positions[1].y, t),
-          scale: gsap.utils.interpolate(positions[0].scale, positions[1].scale, t),
-          rotationZ: gsap.utils.interpolate(positions[0].rotationZ, positions[1].rotationZ, t),
+          scale: gsap.utils.interpolate(
+            positions[0].scale,
+            positions[1].scale,
+            t,
+          ),
+          rotationZ: gsap.utils.interpolate(
+            positions[0].rotationZ,
+            positions[1].rotationZ,
+            t,
+          ),
           zIndex: 2,
         };
       } else if (slot < 1) {
         state = {
           x: gsap.utils.interpolate(positions[1].x, positions[2].x, slot),
           y: gsap.utils.interpolate(positions[1].y, positions[2].y, slot),
-          scale: gsap.utils.interpolate(positions[1].scale, positions[2].scale, slot),
-          rotationZ: gsap.utils.interpolate(positions[1].rotationZ, positions[2].rotationZ, slot),
+          scale: gsap.utils.interpolate(
+            positions[1].scale,
+            positions[2].scale,
+            slot,
+          ),
+          rotationZ: gsap.utils.interpolate(
+            positions[1].rotationZ,
+            positions[2].rotationZ,
+            slot,
+          ),
           zIndex: 3,
         };
       } else if (slot < 2) {
@@ -464,8 +528,16 @@ document.addEventListener("DOMContentLoaded", () => {
         state = {
           x: gsap.utils.interpolate(positions[2].x, positions[3].x, t),
           y: gsap.utils.interpolate(positions[2].y, positions[3].y, t),
-          scale: gsap.utils.interpolate(positions[2].scale, positions[3].scale, t),
-          rotationZ: gsap.utils.interpolate(positions[2].rotationZ, positions[3].rotationZ, t),
+          scale: gsap.utils.interpolate(
+            positions[2].scale,
+            positions[3].scale,
+            t,
+          ),
+          rotationZ: gsap.utils.interpolate(
+            positions[2].rotationZ,
+            positions[3].rotationZ,
+            t,
+          ),
           zIndex: 1,
         };
       } else {
@@ -491,7 +563,7 @@ document.addEventListener("DOMContentLoaded", () => {
       trigger: ".sticky",
       start: "top top",
       end: "+=220%",
-      scrub: 1,
+      scrub: 1.6, // slightly smoother scrub
       pin: true,
       pinSpacing: true,
       invalidateOnRefresh: true,
@@ -501,7 +573,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const headerProgress = gsap.utils.clamp(
           0,
           1,
-          gsap.utils.mapRange(0.04, 0.18, 0, 1, progress)
+          gsap.utils.mapRange(0.04, 0.18, 0, 1, progress),
         );
 
         gsap.set(stickyHeader, {
@@ -515,131 +587,100 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function createDesktopStickyAnimation() {
+    // Increased scrub for smoother feel, will-change hints handled via CSS
+    const tl = gsap.timeline({
+      scrollTrigger: {
+        trigger: ".sticky",
+        start: "top top",
+        end: `+=${window.innerHeight * 5}px`,
+        scrub: 2, // ← up from 1.2 for much smoother scrub
+        pin: true,
+        pinSpacing: true,
+        invalidateOnRefresh: true,
+        anticipatePin: 1, // ← prevents pin jump on fast scroll
+      },
+    });
+
+    // Header fade-in — gentle overshoot removed
+    tl.fromTo(
+      stickyHeader,
+      { y: 40, opacity: 0 },
+      { y: 0, opacity: 1, ease: "power3.out", duration: 0.3 },
+      0.08,
+    );
+
+    // Card container width shrink
+    tl.fromTo(
+      cardContainer,
+      { width: "75%" },
+      { width: "60%", ease: "power3.inOut", duration: 0.5 },
+      0.08,
+    );
+
+    // Gap open — use a softer ease and slightly longer window
+    tl.to(
+      cardContainer,
+      {
+        gap: "20px",
+        ease: "power3.inOut",
+        duration: 0.45,
+      },
+      0.32,
+    );
+
+    tl.to(
+      ["#card-1", "#card-2", "#card-3"],
+      {
+        borderRadius: "20px",
+        ease: "power3.inOut",
+        duration: 0.45,
+      },
+      0.32,
+    );
+
+    // Flip animation — longer duration + smoother ease
+    tl.to(
+      ["#card-1", "#card-2", "#card-3"],
+      {
+        rotationY: 180,
+        stagger: 0.1, // slightly tighter stagger
+        ease: "power3.inOut", // ← rounder curve vs power2
+        duration: 0.6,
+      },
+      0.5,
+    );
+
+    tl.to(
+      "#card-2",
+      {
+        scale: CARD_MAX_SCALE,
+        ease: "power3.inOut",
+        duration: 0.5,
+      },
+      0.5,
+    );
+
+    // Side-card settle — longer window, smoother ease
+    tl.to(
+      ["#card-1", "#card-3"],
+      {
+        y: 30,
+        scale: CARD_MAX_SCALE - 0.16,
+        rotationZ: (i) => [-15, 15][i],
+        ease: "power3.inOut",
+        duration: 0.55,
+      },
+      0.95,
+    );
+
+    // Flow Mode Trigger — separate ScrollTrigger with matching scrub
     ScrollTrigger.create({
       trigger: ".sticky",
       start: "top top",
       end: `+=${window.innerHeight * 5}px`,
-      scrub: 1,
-      pin: true,
-      pinSpacing: true,
+      scrub: 2, // ← must match tl scrub above for continuity
       onUpdate: (self) => {
         const progress = self.progress;
-
-        if (progress >= 0.1 && progress <= 0.25) {
-          const headerProgress = gsap.utils.mapRange(0.1, 0.25, 0, 1, progress);
-          const yValue = gsap.utils.mapRange(0, 1, 40, 0, headerProgress);
-          const opacityValue = gsap.utils.mapRange(0, 1, 0, 1, headerProgress);
-
-          gsap.set(stickyHeader, {
-            y: yValue,
-            opacity: opacityValue,
-          });
-        } else if (progress < 0.1) {
-          gsap.set(stickyHeader, {
-            y: 40,
-            opacity: 0,
-          });
-        } else if (progress > 0.25) {
-          gsap.set(stickyHeader, {
-            y: 0,
-            opacity: 1,
-          });
-        }
-
-        if (progress <= 0.25) {
-          const widthPercentage = gsap.utils.mapRange(0, 0.25, 75, 60, progress);
-          gsap.set(cardContainer, { width: `${widthPercentage}%` });
-        } else {
-          gsap.set(cardContainer, { width: "60%" });
-        }
-
-        if (progress >= 0.35 && !isGapAnimationCompleted) {
-          gsap.to(cardContainer, {
-            gap: "20px",
-            duration: 0.5,
-            ease: "power3.out",
-          });
-
-          gsap.to(["#card-1", "#card-2", "#card-3"], {
-            borderRadius: "20px",
-            duration: 0.5,
-            ease: "power3.out",
-          });
-
-          isGapAnimationCompleted = true;
-        } else if (progress < 0.35 && isGapAnimationCompleted) {
-          gsap.to(cardContainer, {
-            gap: "0px",
-            duration: 0.5,
-            ease: "power3.out",
-          });
-
-          gsap.to("#card-1", {
-            borderRadius: "20px 0 0 20px",
-            duration: 0.5,
-            ease: "power3.out",
-          });
-
-          gsap.to("#card-2", {
-            borderRadius: "0px",
-            duration: 0.5,
-            ease: "power3.out",
-          });
-
-          gsap.to("#card-3", {
-            borderRadius: "0 20px 20px 0",
-            duration: 0.5,
-            ease: "power3.out",
-          });
-
-          isGapAnimationCompleted = false;
-        }
-
-        if (progress >= FLIP_TRIGGER && !isFlipAnimationCompleted) {
-          gsap.to(["#card-1", "#card-2", "#card-3"], {
-            rotationY: 180,
-            duration: 0.75,
-            ease: "power3.inOut",
-            stagger: 0.1,
-          });
-
-          gsap.to("#card-2", {
-            scale: CARD_MAX_SCALE,
-            duration: 0.75,
-            ease: "power3.inOut",
-          });
-
-          gsap.to(["#card-1", "#card-3"], {
-            y: 30,
-            scale: CARD_MAX_SCALE - 0.16,
-            rotationZ: (i) => [-15, 15][i],
-            duration: 0.75,
-            ease: "power3.inOut",
-          });
-
-          isFlipAnimationCompleted = true;
-        } else if (progress < FLIP_TRIGGER && isFlipAnimationCompleted) {
-          if (flowModeActive) {
-            exitFlowMode();
-          }
-
-          gsap.to(["#card-1", "#card-2", "#card-3"], {
-            rotationY: 0,
-            duration: 0.75,
-            ease: "power3.inOut",
-            stagger: -0.1,
-          });
-
-          gsap.to(["#card-1", "#card-2", "#card-3"], {
-            scale: 1,
-            y: 0,
-            rotationZ: 0,
-            duration: 0.75,
-            ease: "power3.inOut",
-          });
-
-          isFlipAnimationCompleted = false;
-        }
 
         if (progress >= FLOW_START) {
           enterFlowMode();
@@ -647,11 +688,12 @@ document.addEventListener("DOMContentLoaded", () => {
           const flowProgress = gsap.utils.clamp(
             0,
             1,
-            gsap.utils.mapRange(FLOW_START, FLOW_END, 0, 1, progress)
+            gsap.utils.mapRange(FLOW_START, FLOW_END, 0, 2, progress),
           );
 
           renderFlow(flowProgress);
         } else if (flowModeActive) {
+          // Smooth exit: fade extra cards out before removing
           exitFlowMode();
         }
       },
@@ -666,11 +708,14 @@ document.addEventListener("DOMContentLoaded", () => {
     isFlipAnimationCompleted = false;
 
     document
-      .querySelectorAll(".card, .card-container, .sticky-header h1, .intro-image")
+      .querySelectorAll(
+        ".card, .card-container, .sticky-header h1, .intro-image",
+      )
       .forEach((el) => el.removeAttribute("style"));
 
     gsap.set(["#card-1", "#card-2", "#card-3"], {
-      clearProps: "x,y,scale,rotationY,rotationZ,opacity,zIndex,xPercent,yPercent",
+      clearProps:
+        "x,y,scale,rotationY,rotationZ,opacity,zIndex,xPercent,yPercent",
     });
   }
 
@@ -678,6 +723,7 @@ document.addEventListener("DOMContentLoaded", () => {
     ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
     resetStickyState();
 
+    createAccountButtonAnimation();
     createHeroAnimation();
     createIntroAnimation();
 
@@ -738,33 +784,21 @@ document.addEventListener("DOMContentLoaded", () => {
       const showEnd = frameCount - 1;
 
       if (frame < showStart) {
-        gsap.set(line1, {
-          opacity: 0,
-          y: 30,
-        });
+        gsap.set(line1, { opacity: 0, y: 30 });
       } else if (frame >= showStart && frame <= showEnd) {
-        const introProgress = gsap.utils.clamp(
-          0,
-          1,
-          (frame - showStart) / 12
-        );
-
+        const introProgress = gsap.utils.clamp(0, 1, (frame - showStart) / 12);
         gsap.set(line1, {
           opacity: introProgress,
           y: gsap.utils.interpolate(30, 0, introProgress),
         });
       } else {
-        gsap.set(line1, {
-          opacity: 1,
-          y: 0,
-        });
+        gsap.set(line1, { opacity: 1, y: 0 });
       }
     }
 
     function render() {
       const img = images[Math.round(imageSeq.frame)];
       if (!img || !img.complete || img.naturalWidth === 0) return;
-
       drawImageCover(context, img, canvas);
       updateFrameText();
     }
@@ -779,9 +813,7 @@ document.addEventListener("DOMContentLoaded", () => {
       setCanvasSize();
       render();
 
-      if (videoTrigger) {
-        videoTrigger.kill();
-      }
+      if (videoTrigger) videoTrigger.kill();
 
       videoTrigger = gsap.to(imageSeq, {
         frame: frameCount - 1,
@@ -808,6 +840,56 @@ document.addEventListener("DOMContentLoaded", () => {
 
   initAnimations();
   initVideoScroll();
+
+  function createCareKitAnimation() {
+    const section = document.querySelector(".care-kit");
+    if (!section) return;
+
+    const image = section.querySelector(".care-image");
+    const content = section.querySelector(".care-content");
+    const paragraphs = section.querySelectorAll(".care-description");
+    const button = section.querySelector(".care-btn");
+
+    const tl = gsap.timeline({
+      scrollTrigger: {
+        trigger: section,
+        start: "top 40%",
+        end: "bottom 80%",
+        scrub: 1,
+      },
+    });
+
+    tl.from(image, {
+      x: -120,
+      opacity: 0,
+      duration: 1,
+      ease: "power3.out",
+    });
+
+    tl.from(
+      content.querySelector("h2"),
+      { x: 80, opacity: 0, duration: 0.6 },
+      "-=0.3",
+    );
+
+    tl.from(
+      content.querySelector("h3"),
+      { x: 80, opacity: 0, duration: 0.6 },
+      "-=0.4",
+    );
+
+    tl.from(
+      paragraphs,
+      { y: 30, opacity: 0, stagger: 0.15, duration: 0.6 },
+      "-=0.5",
+    );
+
+    tl.from(button, { scale: 0.9, opacity: 0, duration: 0.5 }, "-=0.3");
+
+    // tl.to(section, { opacity: 0.9, });
+  }
+
+  createCareKitAnimation();
 
   let resizeTimer;
   window.addEventListener("resize", () => {

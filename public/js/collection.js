@@ -20,7 +20,7 @@ function updateCartCount() {
 function addToCart(product) {
   const cart = getCart();
   const existing = cart.find(
-    (item) => item.id === product.id && item.size === product.size
+    (item) => item.id === product.id && item.size === product.size,
   );
 
   if (existing) {
@@ -47,9 +47,9 @@ gsap.utils.toArray(".product-card").forEach((card, index) => {
       delay: index * 0.04,
       scrollTrigger: {
         trigger: card,
-        start: "top 88%"
-      }
-    }
+        start: "top 88%",
+      },
+    },
   );
 });
 
@@ -75,7 +75,7 @@ document.querySelectorAll(".product-card").forEach((card) => {
       transformPerspective: 1000,
       transformOrigin: "center",
       duration: 0.25,
-      ease: "power2.out"
+      ease: "power2.out",
     });
   });
 
@@ -84,7 +84,7 @@ document.querySelectorAll(".product-card").forEach((card) => {
       rotateX: 0,
       rotateY: 0,
       duration: 0.45,
-      ease: "power3.out"
+      ease: "power3.out",
     });
   });
 });
@@ -100,7 +100,7 @@ document.querySelectorAll(".cart-btn").forEach((button) => {
       price: Number(button.dataset.price),
       oldPrice: Number(button.dataset.oldPrice),
       image: button.dataset.image,
-      size: button.dataset.size
+      size: button.dataset.size,
     });
 
     const original = button.textContent;
@@ -113,3 +113,25 @@ document.querySelectorAll(".cart-btn").forEach((button) => {
 });
 
 updateCartCount();
+
+function toggleMenu() {
+  // Hamburger menu
+  const hamburger = document.getElementById("hamburger");
+  const navItems = document.getElementById("nav-items");
+
+  if (hamburger && navItems) {
+    hamburger.addEventListener("click", () => {
+      hamburger.classList.toggle("open");
+      navItems.classList.toggle("open");
+    });
+
+    navItems.querySelectorAll(".nav-item").forEach((link) => {
+      link.addEventListener("click", () => {
+        hamburger.classList.remove("open");
+        navItems.classList.remove("open");
+      });
+    });
+  }
+}
+
+toggleMenu();
