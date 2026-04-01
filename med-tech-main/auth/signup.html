@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>SingUp</title>
+    <link rel="stylesheet" href="auth.css">
+</head>
+
+<body>
+
+
+    <div class="auth-bg">
+        <img src="/images/amlaBg.png">
+        <div class="auth-overlay"></div>
+
+        <div class="auth-card">
+            <h1 class="auth-title">Create Account</h1>
+
+            <form id="signup-form">
+                <div class="auth-group">
+                    <label>Full Name</label>
+                    <input type="text" id="name">
+                </div>
+
+                <div class="auth-group">
+                    <label>Email</label>
+                    <input type="email" id="email">
+                </div>
+
+                <div class="auth-group">
+                    <label>Password</label>
+                    <input type="password" id="password">
+                </div>
+
+                <button id="signup-btn" type="submit" class="auth-btn">Sign Up</button>
+            </form>
+
+            <p id="message" class="auth-message"></p>
+
+            <div class="auth-social-text">or Sign Up using</div>
+
+            <div class="auth-social">
+                <img src="google.png" class="auth-icon" onclick="googleLogin()">
+            </div>
+
+            <div class="auth-link" onclick="location.href='login.html'">
+                Already have an account? LOGIN
+            </div>
+        </div>
+    </div>
+
+    <script src="signup.js"></script>
+</body>
+
+</html>
