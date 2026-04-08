@@ -1,12 +1,12 @@
 :root {
   --bg: #f8f3ec;
-  --surface: rgba(255,255,255,0.74);
+  --surface: rgba(255, 255, 255, 0.74);
   --text: #5c6715;
   --muted: #6f6a65;
   --accent: #5c6715;
   --soft: #ece4d8;
-  --line: rgba(0,0,0,0.08);
-  --shadow: 0 18px 50px rgba(0,0,0,0.08);
+  --line: rgba(0, 0, 0, 0.08);
+  --shadow: 0 18px 50px rgba(0, 0, 0, 0.08);
 }
 
 * {
@@ -19,8 +19,16 @@ body {
   font-family: Arial, sans-serif;
   color: var(--text);
   background:
-    radial-gradient(circle at top left, rgba(255,255,255,0.75), transparent 25%),
-    radial-gradient(circle at bottom right, rgba(255,255,255,0.7), transparent 25%),
+    radial-gradient(
+      circle at top left,
+      rgba(255, 255, 255, 0.75),
+      transparent 25%
+    ),
+    radial-gradient(
+      circle at bottom right,
+      rgba(255, 255, 255, 0.7),
+      transparent 25%
+    ),
     var(--bg);
   overflow-x: hidden;
 }
@@ -30,22 +38,46 @@ img {
   display: block;
 }
 
+/* ===========================
+   TOPBAR / NAV — BASE STYLES
+   =========================== */
+
 .topbar {
   width: min(1280px, calc(100% - 2rem));
-  margin: 0 auto;
-  padding: 1.2rem 0 0;
+  background: transparent;
+  margin: auto;
+  padding: 0rem 4rem 0;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: space-around;
+  font-size: 1.2rem;
+  height: 80px;
 }
 
-.brand,
-.back-link {
+.topbar a img {
+  width: 100px;
+  height: 100px;
+  object-fit: contain;
+}
+
+.nav-items {
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+}
+
+.nav-item {
   text-decoration: none;
   color: #111;
 }
 
+.nav-item:hover {
+  color: var(--accent);
+}
+
 .brand {
+  text-decoration: none;
+  color: #111;
   font-weight: 700;
   font-size: 1.2rem;
 }
@@ -57,7 +89,7 @@ img {
   width: 48px;
   height: 48px;
   border-radius: 50%;
-  background: rgba(255,255,255,0.7);
+  background: rgba(255, 255, 255, 0.7);
   display: grid;
   place-items: center;
   box-shadow: var(--shadow);
@@ -65,6 +97,16 @@ img {
 
 .cart-icon {
   font-size: 1.25rem;
+}
+
+.span-col {
+  color: white;
+  background: var(--accent);
+  font-weight: 600;
+  padding: 6px 14px;
+  border-radius: 12px;
+  display: inline-block;
+  letter-spacing: 0.5px;
 }
 
 .cart-count {
@@ -80,6 +122,51 @@ img {
   font-size: 0.72rem;
   display: grid;
   place-items: center;
+}
+
+/* ===========================
+   HAMBURGER — hidden on desktop
+   =========================== */
+
+.hamburger {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  width: 40px;
+  height: 40px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 8px;
+  z-index: 1001;
+}
+
+.hamburger span {
+  display: block;
+  width: 24px;
+  height: 2px;
+  background: #111;
+  border-radius: 2px;
+  transition:
+    transform 0.3s ease,
+    opacity 0.3s ease;
+  transform-origin: center;
+}
+
+.hamburger.open span:nth-child(1) {
+  transform: translateY(7px) rotate(45deg);
+}
+
+.hamburger.open span:nth-child(2) {
+  opacity: 0;
+  transform: scaleX(0);
+}
+
+.hamburger.open span:nth-child(3) {
+  transform: translateY(-7px) rotate(-45deg);
 }
 
 .product-page {
@@ -121,7 +208,11 @@ img {
   width: 420px;
   height: 420px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(255,255,255,0.95), rgba(255,255,255,0.15));
+  background: radial-gradient(
+    circle,
+    rgba(255, 255, 255, 0.95),
+    rgba(255, 255, 255, 0.15)
+  );
   filter: blur(20px);
 }
 
@@ -134,7 +225,7 @@ img {
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   box-shadow: var(--shadow);
-  border: 1px solid rgba(255,255,255,0.7);
+  border: 1px solid rgba(255, 255, 255, 0.7);
   transform-style: preserve-3d;
 }
 
@@ -205,10 +296,13 @@ img {
 .size-pill {
   padding: 0.9rem 1.2rem;
   border: 1px solid var(--line);
-  background: rgba(255,255,255,0.7);
+  background: rgba(255, 255, 255, 0.7);
   border-radius: 999px;
   cursor: pointer;
-  transition: transform 0.25s ease, background 0.25s ease, color 0.25s ease;
+  transition:
+    transform 0.25s ease,
+    background 0.25s ease,
+    color 0.25s ease;
 }
 
 .size-pill.active,
@@ -232,7 +326,9 @@ img {
   padding: 1rem 1.5rem;
   font-size: 0.95rem;
   cursor: pointer;
-  transition: transform 0.25s ease, opacity 0.25s ease;
+  transition:
+    transform 0.25s ease,
+    opacity 0.25s ease;
 }
 
 .primary-btn {
@@ -286,8 +382,8 @@ img {
   gap: 1rem;
   padding: 1.2rem;
   border-radius: 24px;
-  background: rgba(255,255,255,0.72);
-  border: 1px solid rgba(255,255,255,0.72);
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.72);
   box-shadow: var(--shadow);
 }
 
@@ -327,11 +423,11 @@ img {
   width: 300px;
   border-radius: 28px;
   overflow: hidden;
-  background: rgba(255,255,255,0.76);
+  background: rgba(255, 255, 255, 0.76);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
   box-shadow: var(--shadow);
-  border: 1px solid rgba(255,255,255,0.72);
+  border: 1px solid rgba(255, 255, 255, 0.72);
   transform-style: preserve-3d;
 }
 
@@ -400,9 +496,32 @@ img {
 .suggested-card {
   padding: 1.6rem;
   border-radius: 28px;
-  background: rgba(255,255,255,0.7);
-  box-shadow: var(--shadow);
-  border: 1px solid rgba(255,255,255,0.75);
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.75);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.review-para {
+  height: 90px;
+  overflow: auto;
+}
+
+.reviews-marquee {
+  overflow: hidden;
+  width: 100%;
+}
+
+.reviews-grid {
+  display: flex;
+  gap: 1rem;
+  width: max-content;
+}
+
+.review-card {
+  /* min-width: 260px; */
+  max-width: 400px;
 }
 
 .ingredient-text p {
@@ -425,7 +544,7 @@ img {
   border-radius: 26px;
   overflow: hidden;
   box-shadow: var(--shadow);
-  background: rgba(255,255,255,0.7);
+  background: rgba(255, 255, 255, 0.7);
   min-height: 220px;
 }
 
@@ -448,11 +567,11 @@ img {
   grid-area: small2;
 }
 
-.reviews-grid,
 .suggested-grid {
-  display: grid;
+  /* display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 1.4rem;
+  gap: 1.4rem; */
+  display: flex;
   perspective: 1400px;
 }
 
@@ -523,6 +642,12 @@ img {
     grid-template-columns: 1fr;
   }
 
+  .suggested-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 1.4rem;
+  }
+
   .product-visual {
     min-height: 420px;
   }
@@ -588,7 +713,10 @@ img {
   }
 
   .floating-card {
-    width: 220px;
+    width: 280px;
+  /* transform: translateX(10%); */
+  transform: translateX(12vw);
+
   }
 
   .floating-card img {
@@ -629,5 +757,173 @@ img {
   .reviews-grid,
   .suggested-grid {
     grid-template-columns: 1fr;
+  }
+}
+
+
+.footer {
+  background: #f6f4f1;
+  padding: 80px 8%;
+  font-family: inherit;
+}
+
+.footer-container {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+.footer-description {
+  font-size: 14px;
+  color: #666;
+}
+
+.footer-col h4 {
+  font-size: 14px;
+  letter-spacing: 1px;
+  margin-bottom: 20px;
+  font-weight: 600;
+}
+
+.footer-col a {
+  display: block;
+  color: #666;
+  text-decoration: none;
+  margin-bottom: 12px;
+  transition: 0.3s ease;
+}
+
+.footer-col a:hover {
+  color: #2f3a1f;
+}
+
+.footer-about p {
+  color: #666;
+  line-height: 1.7;
+  margin-bottom: 15px;
+}
+
+.footer-logo {
+  width: 100px;
+  margin-bottom: 10px;
+  object-fit: contain;
+  height: 50px;
+}
+
+
+.footer-address {
+  margin-top: 20px;
+}
+
+.footer-phone {
+  margin-top: 10px;
+}
+
+
+.footer-address {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  text-decoration: none;
+  color: #666;
+  line-height: 1.6;
+}
+
+.footer-address:hover {
+  color: #5a6b2d;
+}
+
+.footer-icon {
+  margin-top: 3px;
+  flex-shrink: 0;
+}
+
+
+
+/* Responsive */
+
+@media (max-width: 1024px) {
+  .footer-container {
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+  }
+}
+
+@media (max-width: 600px) {
+  .footer {
+    padding: 60px 20px;
+  }
+
+  .footer-container {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+/* ===========================
+   RESPONSIVE — must come LAST
+   =========================== */
+
+@media (max-width: 1024px) {
+  .collection-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .footer-container {
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+  }
+}
+
+@media (max-width: 768px) {
+  .topbar {
+    width: calc(100% - 1.2rem);
+    padding: 0 1rem;
+    justify-content: space-between;
+    position: relative;
+  }
+
+  .hamburger {
+    display: flex;
+    order: 2;
+  }
+
+  .brand {
+    order: 1;
+  }
+
+  .cart-icon-wrap {
+    order: 3;
+  }
+
+  .nav-items {
+    display: none;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0;
+    position: absolute;
+    top: 80px;
+    left: 0;
+    right: 0;
+    background: #fff;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+    padding: 1rem 1.5rem;
+    z-index: 9999;
+    border-top: 1px solid #eee;
+  }
+
+  .nav-items.open {
+    display: flex;
+  }
+
+  .nav-item {
+    padding: 0.75rem 0;
+    width: 100%;
+    border-bottom: 1px solid #f0f0f0;
+    font-size: 1rem;
+  }
+
+  .nav-item:last-child {
+    border-bottom: none;
   }
 }
