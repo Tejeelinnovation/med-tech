@@ -7,6 +7,28 @@
   --card-3: #eaefc5;
   --card-4: #8b6b4f;
   --card-5: #b08968;
+
+  /* 
+     INTRO SECTION IMAGES - DESKTOP 
+     TWEAK: Change these values to adjust image placement on Large Screens
+  */
+  --intro-img-1-width: 50vw;
+  --intro-img-1-top: 20%;
+  --intro-img-1-left: 25%;
+  --intro-img-1-bottom: auto;
+  --intro-img-1-right: auto;
+
+  --intro-img-2-width: 25vw;
+  --intro-img-2-top: auto;
+  --intro-img-2-left: auto;
+  --intro-img-2-bottom: -20%;
+  --intro-img-2-right: 24%;
+
+  --intro-img-3-width: 25vw;
+  --intro-img-3-top: 65%;
+  --intro-img-3-left: auto;
+  --intro-img-3-bottom: auto;
+  --intro-img-3-right: 53%;
 }
 
 * {
@@ -100,6 +122,8 @@ section {
   display: flex;
   justify-content: center;
   align-items: center;
+  overscroll-behavior-y: none;
+  overflow: hidden; /* Crop side portions as requested */
 }
 
 .sticky-header {
@@ -122,7 +146,8 @@ section {
   position: relative;
   width: 75%;
   display: flex;
-  perspective: 1000px;
+  perspective: 1500px; /* Slightly higher perspective for stability */
+  perspective-origin: center center;
   transform: translateY(40px);
   will-change: width;
 }
@@ -133,6 +158,11 @@ section {
   aspect-ratio: 5/7;
   transform-style: preserve-3d;
   transform-origin: top;
+  will-change: transform;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  transform: translateZ(0); /* Force hardware acceleration */
+  image-rendering: -webkit-optimize-contrast; /* Improve sub-pixel stability */
 }
 
 #card-1 {
@@ -161,7 +191,87 @@ section {
   text-align: center;
   transform: rotateY(180deg);
   padding: 2rem;
+  background: white; /* Fallback */
 }
+
+/* MEDIA CARD STYLES */
+.media-card .card-back {
+  padding: 12px; /* This creates the "border" effect */
+  overflow: hidden;
+  display: flex;
+  background: inherit; 
+}
+
+.media-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 12px; /* Inner radius for the media content */
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #000; 
+}
+
+.review-video, .review-image {
+  width: 100%;
+  height: 100%;
+  
+  /* TWEAK: Change to 'contain' if you want to see the whole video/image */
+  object-fit: cover; 
+  
+  /* TWEAK: Adjust video border radius */
+  border-radius: 0; 
+  
+  display: block;
+  pointer-events: none; /* Let clicks pass to the container or button */
+}
+
+/* Mute Button Styles */
+.mute-btn {
+  position: absolute;
+  top: 15px; /* Moved to top as requested */
+  right: 15px;
+  width: 36px;
+  height: 36px;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  padding: 8px;
+  pointer-events: auto;
+}
+
+.mute-btn:hover {
+  background: rgba(0, 0, 0, 0.6);
+  transform: scale(1.1);
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+.mute-btn:active {
+  transform: scale(0.95);
+}
+
+.mute-btn svg {
+  width: 100%;
+  height: 100%;
+  fill: white;
+  opacity: 0.9;
+}
+
+.mute-btn.unmuted .mute-icon,
+.mute-btn:not(.unmuted) .unmute-icon {
+  display: none;
+}
+
 
 .card-back span {
   position: absolute;
@@ -169,6 +279,7 @@ section {
   left: 2rem;
   opacity: 0.4;
   font-size: 1.5rem;
+  z-index: 10;
 }
 
 .card-back p {
@@ -379,7 +490,7 @@ section {
   position: relative;
   z-index: 5;
   width: 40%;
-  top: -33%;
+  margin: 0 auto;
 }
 
 .intro-image {
@@ -397,21 +508,27 @@ section {
 
 /* Final size + final position = your "actual size" */
 .img-1 {
-  width: 50vw;
-  top: 20%;
-  left: 25%;
+  width: var(--intro-img-1-width);
+  top: var(--intro-img-1-top);
+  left: var(--intro-img-1-left);
+  bottom: var(--intro-img-1-bottom);
+  right: var(--intro-img-1-right);
 }
 
 .img-2 {
-  width: 25vw;
-  bottom: -20%;
-  right: 24%;
+  width: var(--intro-img-2-width);
+  top: var(--intro-img-2-top);
+  left: var(--intro-img-2-left);
+  bottom: var(--intro-img-2-bottom);
+  right: var(--intro-img-2-right);
 }
 
 .img-3 {
-  width: 25vw;
-  top: 65%;
-  right: 53%;
+  width: var(--intro-img-3-width);
+  top: var(--intro-img-3-top);
+  left: var(--intro-img-3-left);
+  bottom: var(--intro-img-3-bottom);
+  right: var(--intro-img-3-right);
 }
 
 .buy-btn {
@@ -453,17 +570,17 @@ section {
 
 @media (max-width: 1000px) {
   h1 {
-    font-size: 3rem;
+    font-size: 2.8rem;
   }
 
   .intro h1,
   .outro h1 {
-    width: 100%;
+    width: 90%;
   }
 
   .intro h1 {
-    font-size: 5rem;
-    top: -20%;
+    font-size: 2.8rem;
+    top: -10%;
   }
 
   .sticky {
@@ -565,23 +682,10 @@ section {
     z-index: 50;
   }
 
-  .img-1 {
-    width: 460px;
-    top: 40%;
-    left: -8%;
-    z-index: 5;
-  }
-
-  .img-2 {
-    width: 320px;
-    bottom: -14%;
-    right: 36%;
-  }
-
-  .img-3 {
-    width: 310px;
-    top: 73%;
-    right: -8%;
+  .intro h1 {
+    width: 100%;
+    font-size: 3rem;
+    z-index: 50;
   }
 
   .buy-btn {

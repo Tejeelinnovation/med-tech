@@ -24,14 +24,17 @@ document.addEventListener("DOMContentLoaded", () => {
   let isGapAnimationCompleted = false;
   let isFlipAnimationCompleted = false;
 
-  const CARD_MAX_SCALE = 1.48;
-  const CARD_MIN_SCALE = 0.92;
+  /* TWEAK: Reduce this for less aggressive scale, increase for more pop */
+  const CARD_MAX_SCALE = 1.35; 
+  /* TWEAK: Minimum scale for background cards */
+  const CARD_MIN_SCALE = 0.95; 
 
   let flowModeActive = false;
   let extraCards = [];
   let flowBase = null;
 
-  const FLOW_START = 0.78;
+  /* TWEAK: Scroll trigger points for flow mode */
+  const FLOW_START = 0.8;
   const FLOW_END = 1.0;
   const FLIP_TRIGGER = 0.5;
 
@@ -251,22 +254,100 @@ function createAccountButtonAnimation() {
     return card;
   }
 
-  function createExtraCards() {
+  async function createExtraCards() {
     if (extraCards.length) return;
 
-    const data = [
-      ["card-4", "Card Information4", "This is the card back content4."],
-      ["card-5", "Card Information5", "This is the card back content5."],
-      ["card-6", "Card Information6", "This is the card back content6."],
-      ["card-7", "Card Information7", "This is the card back content7."],
-      ["card-8", "Card Information8", "This is the card back content8."],
-      ["card-9", "Card Information9", "This is the card back content9."],
+    let data = [
+      ["card-4", "image", "assets/images/cover-01.jpg", "assets/images/cover-01.jpg"],
+      ["card-5", "text", "Aman Verma", "The products are amazing! My hair feels much stronger and the fall has reduced significantly within just 3 weeks."],
+      ["card-6", "media", "assets/video/WhatsApp%20Video%202026-04-08%20at%2014.45.25.mp4", "assets/images/cover-03.jpg"],
+      ["card-7", "text", "Sneha Rao", "I was skeptical about ayurvedic oils but this one really works. No more itchy scalp or dandruff."],
     ];
 
-    extraCards = data.map(([id, title, text]) =>
-      createExtraCard(id, title, text),
-    );
+    try {
+      // TWEAK: Update this URL to your actual production API endpoint if different
+      const response = await fetch('http://localhost:3000/api/reviews'); 
+      if (response.ok) {
+        const apiReviews = await response.json();
+        if (apiReviews && apiReviews.length > 0) {
+          // Filter only active ones and map to the format we need
+          data = apiReviews
+            .filter(r => r.isActive !== false)
+            .sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0))
+            .map((r, index) => [
+              `card-api-${index}`,
+              r.mediaType || 'text',
+              r.mediaType === 'none' ? r.name : r.mediaUrl,
+              r.mediaType === 'none' ? r.comment : r.posterUrl
+            ]);
+        }
+      }
+    } catch (err) {
+      console.warn("Could not fetch reviews from API, using fallback data.", err);
+    }
+
+    extraCards = data.map(([id, type, titleOrUrl, textOrPoster]) => {
+      const card = document.createElement("div");
+      card.className = `card extra-card ${type === 'media' || type === 'image' ? 'media-card' : ''}`;
+      card.id = id;
+
+      if (type === 'media') {
+        card.innerHTML = `
+          <div class="card-back">
+            <div class="media-container">
+              <video 
+                src="${titleOrUrl}" 
+                poster="${textOrPoster}"
+                autoplay 
+                muted 
+                loop 
+                playsinline
+                class="review-video">
+              </video>
+              <button class="mute-btn" aria-label="Toggle Mute">
+                <svg class="unmute-icon" viewBox="0 0 24 24"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77zM3 9v6h4l5 5V4L7 9H3z"/></svg>
+                <svg class="mute-icon" viewBox="0 0 24 24"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v1.79l2.48 2.48c.01-.08.02-.16.02-.24zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.41.32-.85.59-1.32.79v2.06c1.02-.23 1.97-.67 2.8-1.28l2.2 2.2 1.27-1.27L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/></svg>
+              </button>
+            </div>
+          </div>
+        `;
+      } else if (type === 'image') {
+        card.innerHTML = `
+          <div class="card-back">
+            <div class="media-container">
+              <img src="${titleOrUrl}" alt="Review Image" class="review-image" />
+            </div>
+          </div>
+        `;
+      } else {
+        card.innerHTML = `
+          <div class="card-back">
+            <span>${titleOrUrl}</span>
+            <p>${textOrPoster}</p>
+          </div>
+        `;
+      }
+      return card;
+    });
     extraCards.forEach((card) => cardContainer.appendChild(card));
+    setupMuteButtons();
+  }
+
+  function setupMuteButtons() {
+    const muteBtns = document.querySelectorAll(".mute-btn");
+    muteBtns.forEach((btn) => {
+      // Use onclick to avoid duplicate listeners if called multiple times
+      btn.onclick = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const cardBack = btn.closest(".card-back");
+        const video = cardBack.querySelector("video");
+        if (video) {
+          video.muted = !video.muted;
+          btn.classList.toggle("unmuted", !video.muted);
+        }
+      };
+    });
   }
 
   function removeExtraCards() {
@@ -274,10 +355,10 @@ function createAccountButtonAnimation() {
     extraCards = [];
   }
 
-  function enterFlowMode() {
+  async function enterFlowMode() {
     if (flowModeActive) return;
 
-    createExtraCards();
+    await createExtraCards();
 
     const containerRect = cardContainer.getBoundingClientRect();
     const centerCard = document.querySelector("#card-2");
@@ -381,10 +462,10 @@ function createAccountButtonAnimation() {
 
     const allCards = [...originals, ...extraCards];
 
-    const spacing = flowBase.width * 0.74 + 34;
+    const spacing = (flowBase.width * 0.74 + 34);
     const curve = 18;
     const rotateFactor = 9;
-    const visibleRange = 2.35;
+    const visibleRange = 2.6; // Increased for better crop transition at edges
 
     // Smoother eased progress for flow travel
     const easedProgress = gsap.parseEase("power2.inOut")(progress / 2) * 2;
@@ -393,14 +474,14 @@ function createAccountButtonAnimation() {
     allCards.forEach((card, i) => {
       const slot = i - 1 - travel;
       const absSlot = Math.abs(slot);
+      
       const x = slot * spacing;
-      const y = Math.pow(absSlot, 1.22) * curve - (slot === 0 ? 14 : 0);
+      // Simplified curve to avoid complex float fluctuations
+      const y = (absSlot * absSlot * 0.5) * curve; 
       const rotationZ = slot * rotateFactor;
 
       const scale = Math.max(CARD_MIN_SCALE, CARD_MAX_SCALE - absSlot * 0.1);
 
-      // Smooth opacity fade at edges using a soft step
-      const opacityRaw = absSlot <= visibleRange ? 1 : 0;
       const opacitySmooth =
         absSlot <= visibleRange - 0.35
           ? 1
@@ -412,6 +493,7 @@ function createAccountButtonAnimation() {
               )
             : 0;
 
+      // Use gsap.set with autoRound: false for high precision
       gsap.set(card, {
         x,
         y,
@@ -420,7 +502,9 @@ function createAccountButtonAnimation() {
         rotationY: card.classList.contains("extra-card") ? 0 : 180,
         rotationZ,
         zIndex: 100 - Math.round(absSlot * 10),
-        borderRadius: "20px",
+        force3D: true,
+        z: 0.1,
+        autoRound: false,
       });
     });
   }
@@ -552,6 +636,9 @@ function createAccountButtonAnimation() {
         rotationZ: state.rotationZ,
         opacity: 1,
         zIndex: state.zIndex,
+        force3D: true,
+        z: 0.1,
+        autoRound: false,
       });
     });
   }
@@ -592,12 +679,14 @@ function createAccountButtonAnimation() {
       scrollTrigger: {
         trigger: ".sticky",
         start: "top top",
+        /* TWEAK: Increase this value (e.g. * 6) to make the overall scroll duration longer/slower */
         end: `+=${window.innerHeight * 5}px`,
-        scrub: 2, // ← up from 1.2 for much smoother scrub
+        /* TWEAK: Higher scrub value (e.g. 2.5 or 3) makes the animation "follow" the scroll more slowly/smoothly */
+        scrub: 2.2, 
         pin: true,
         pinSpacing: true,
         invalidateOnRefresh: true,
-        anticipatePin: 1, // ← prevents pin jump on fast scroll
+        anticipatePin: 1, 
       },
     });
 
@@ -664,11 +753,15 @@ function createAccountButtonAnimation() {
     tl.to(
       ["#card-1", "#card-3"],
       {
-        y: 30,
-        scale: CARD_MAX_SCALE - 0.16,
-        rotationZ: (i) => [-15, 15][i],
-        ease: "power3.inOut",
-        duration: 0.55,
+        y: 15, 
+        /* TWEAK: Increase/decrease this value to control card scale intensity for side cards */
+        scale: CARD_MAX_SCALE - 0.12, 
+        rotationZ: (i) => [-10, 10][i],
+        ease: "none", // Remove easing to prevent vibration during scrub
+        duration: 0.6,
+        force3D: true,
+        z: 0.1,
+        autoRound: false, // Prevent pixel rounding jitter
       },
       0.95,
     );
@@ -679,11 +772,11 @@ function createAccountButtonAnimation() {
       start: "top top",
       end: `+=${window.innerHeight * 5}px`,
       scrub: 2, // ← must match tl scrub above for continuity
-      onUpdate: (self) => {
+      onUpdate: async (self) => {
         const progress = self.progress;
 
         if (progress >= FLOW_START) {
-          enterFlowMode();
+          await enterFlowMode();
 
           const flowProgress = gsap.utils.clamp(
             0,
@@ -726,6 +819,7 @@ function createAccountButtonAnimation() {
     createAccountButtonAnimation();
     createHeroAnimation();
     createIntroAnimation();
+    setupMuteButtons(); // Initial call for HTML cards
 
     const mm = gsap.matchMedia();
 
@@ -809,7 +903,7 @@ function createAccountButtonAnimation() {
       images.push(img);
     }
 
-    images[0].onload = () => {
+    const onFirstFrameLoad = () => {
       setCanvasSize();
       render();
 
@@ -825,11 +919,18 @@ function createAccountButtonAnimation() {
           start: "top top",
           end: "bottom bottom",
           scrub: 1,
+          invalidateOnRefresh: true,
         },
       });
 
       ScrollTrigger.refresh();
     };
+
+    if (images[0].complete) {
+      onFirstFrameLoad();
+    } else {
+      images[0].onload = onFirstFrameLoad;
+    }
 
     window.addEventListener("resize", () => {
       setCanvasSize();
@@ -838,8 +939,16 @@ function createAccountButtonAnimation() {
     });
   }
 
-  initAnimations();
-  initVideoScroll();
+  window.addEventListener("load", () => {
+    initAnimations();
+    initVideoScroll();
+    createCareKitAnimation();
+    
+    // Final check for heights after a brief delay to ensure DOM is settled
+    setTimeout(() => {
+      ScrollTrigger.refresh();
+    }, 100);
+  });
 
   function createCareKitAnimation() {
     const section = document.querySelector(".care-kit");
@@ -885,11 +994,10 @@ function createAccountButtonAnimation() {
     );
 
     tl.from(button, { scale: 0.9, opacity: 0, duration: 0.5 }, "-=0.3");
-
-    // tl.to(section, { opacity: 0.9, });
   }
 
-  createCareKitAnimation();
+  // Already handled in window.load
+  // createCareKitAnimation();
 
   let resizeTimer;
   window.addEventListener("resize", () => {
