@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Checkout</title>
+  <link rel="stylesheet" href="./checkout.css" />
+</head>
+<body>
+  <header class="topbar">
+    <a href="./collection.html" class="brand">MedTech</a>
+  </header>
+
+  <main class="checkout-page">
+    <section class="checkout-layout">
+      <div class="checkout-form-wrap">
+        <div class="section-head">
+          <p class="eyebrow">Checkout</p>
+          <h1>Complete Your Order</h1>
+        </div>
+
+        <form id="checkout-form" class="checkout-form">
+          <div class="field-grid">
+            <div class="field">
+              <label for="name">Full Name</label>
+              <input id="name" type="text" required />
+            </div>
+
+            <div class="field">
+              <label for="phone">Phone Number</label>
+              <input id="phone" type="tel" required />
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="email">Email ID</label>
+            <input id="email" type="email" required />
+          </div>
+
+          <div class="field">
+            <label for="address">Address</label>
+            <textarea id="address" rows="4" required></textarea>
+          </div>
+
+          <div class="field-grid">
+            <div class="field">
+              <label for="city">City</label>
+              <input id="city" type="text" required />
+            </div>
+
+            <div class="field">
+              <label for="pincode">Pincode</label>
+              <input id="pincode" type="text" required />
+            </div>
+          </div>
+
+          <div class="payment-box">
+            <h2>Payment Details</h2>
+
+            <div class="field">
+              <label for="card-number">Card Number</label>
+              <input id="card-number" type="text" placeholder="1234 5678 9012 3456" required />
+            </div>
+
+            <div class="field-grid">
+              <div class="field">
+                <label for="expiry">Expiry</label>
+                <input id="expiry" type="text" placeholder="MM/YY" required />
+              </div>
+
+              <div class="field">
+                <label for="cvv">CVV</label>
+                <input id="cvv" type="password" placeholder="123" required />
+              </div>
+            </div>
+          </div>
+
+          <button class="place-order-btn" type="submit">Proceed Payment</button>
+        </form>
+      </div>
+
+      <aside class="summary-card">
+        <h2>Order Summary</h2>
+        <div id="checkout-items" class="checkout-items"></div>
+        <div class="summary-row">
+          <span>Subtotal</span>
+          <span id="checkout-subtotal">₹0</span>
+        </div>
+        <div class="summary-row">
+          <span>Delivery</span>
+          <span id="checkout-delivery">₹99</span>
+        </div>
+        <div class="summary-row total">
+          <span>Total</span>
+          <span id="checkout-total">₹0</span>
+        </div>
+      </aside>
+    </section>
+  </main>
+
+  <script src="./checkout.js"></script>
+</body>
+</html>
