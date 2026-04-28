@@ -21,13 +21,32 @@ document.addEventListener("DOMContentLoaded", () => {
   const heroWord = document.querySelector(".hero .word");
   const heroCursor = document.querySelector(".hero .cursor");
 
+  const reviewPanel = document.querySelector(".sticky");
+
+  function autoMuteVideosAfterReviewPanel() {
+    const videos = document.querySelectorAll("video");
+
+    if (!reviewPanel || videos.length === 0) return;
+
+    const reviewBottom = reviewPanel.getBoundingClientRect().bottom;
+
+    if (reviewBottom < 0) {
+      videos.forEach((video) => {
+        video.muted = true;
+      });
+    }
+  }
+
+  window.addEventListener("scroll", autoMuteVideosAfterReviewPanel);
+  lenis.on("scroll", autoMuteVideosAfterReviewPanel);
+
   let isGapAnimationCompleted = false;
   let isFlipAnimationCompleted = false;
 
   /* TWEAK: Reduce this for less aggressive scale, increase for more pop */
-  const CARD_MAX_SCALE = 1.35; 
+  const CARD_MAX_SCALE = 1.35;
   /* TWEAK: Minimum scale for background cards */
-  const CARD_MIN_SCALE = 0.95; 
+  const CARD_MIN_SCALE = 0.95;
 
   let flowModeActive = false;
   let extraCards = [];
@@ -43,63 +62,63 @@ document.addEventListener("DOMContentLoaded", () => {
     return a + (b - a) * t;
   }
 
-function createAccountButtonAnimation() {
-  const accountBtn = document.querySelector(".account-btn");
-  const intro = document.querySelector(".intro");
+  function createAccountButtonAnimation() {
+    const accountBtn = document.querySelector(".account-btn");
+    const intro = document.querySelector(".intro");
 
-  if (!accountBtn || !intro) return;
+    if (!accountBtn || !intro) return;
 
-  gsap.set(accountBtn, {
-    y: -20,
-    opacity: 0,
-    filter: "blur(6px)",
-  });
-
-  const mm = gsap.matchMedia();
-
-  mm.add("(max-width: 999px)", () => {
-    // Mobile: intro hits viewport sooner, so trigger fires earlier
-    ScrollTrigger.create({
-      trigger: intro,
-      start: "top -40%",
-      end: "top 20%",
-      scrub: 2.5,
-      // markers: true,
-      onUpdate: (self) => {
-        const eased = gsap.parseEase("power2.out")(self.progress);
-        gsap.to(accountBtn, {
-          y: gsap.utils.interpolate(-20, 0, eased),
-          opacity: eased,
-          filter: `blur(${gsap.utils.interpolate(6, 0, eased)}px)`,
-          duration: 0.6,
-          ease: "power2.out",
-          overwrite: true,
-        });
-      },
+    gsap.set(accountBtn, {
+      y: -20,
+      opacity: 0,
+      filter: "blur(6px)",
     });
-  });
 
-  mm.add("(min-width: 1000px)", () => {
-    // Desktop: original values
-    ScrollTrigger.create({
-      trigger: intro,
-      start: "top -85%",
-      end: "top 20%",
-      scrub: 2.5,
-      onUpdate: (self) => {
-        const eased = gsap.parseEase("power2.out")(self.progress);
-        gsap.to(accountBtn, {
-          y: gsap.utils.interpolate(-20, 0, eased),
-          opacity: eased,
-          filter: `blur(${gsap.utils.interpolate(6, 0, eased)}px)`,
-          duration: 0.6,
-          ease: "power2.out",
-          overwrite: true,
-        });
-      },
+    const mm = gsap.matchMedia();
+
+    mm.add("(max-width: 999px)", () => {
+      // Mobile: intro hits viewport sooner, so trigger fires earlier
+      ScrollTrigger.create({
+        trigger: intro,
+        start: "top -40%",
+        end: "top 20%",
+        scrub: 2.5,
+        // markers: true,
+        onUpdate: (self) => {
+          const eased = gsap.parseEase("power2.out")(self.progress);
+          gsap.to(accountBtn, {
+            y: gsap.utils.interpolate(-20, 0, eased),
+            opacity: eased,
+            filter: `blur(${gsap.utils.interpolate(6, 0, eased)}px)`,
+            duration: 0.6,
+            ease: "power2.out",
+            overwrite: true,
+          });
+        },
+      });
     });
-  });
-}
+
+    mm.add("(min-width: 1000px)", () => {
+      // Desktop: original values
+      ScrollTrigger.create({
+        trigger: intro,
+        start: "top -85%",
+        end: "top 20%",
+        scrub: 2.5,
+        onUpdate: (self) => {
+          const eased = gsap.parseEase("power2.out")(self.progress);
+          gsap.to(accountBtn, {
+            y: gsap.utils.interpolate(-20, 0, eased),
+            opacity: eased,
+            filter: `blur(${gsap.utils.interpolate(6, 0, eased)}px)`,
+            duration: 0.6,
+            ease: "power2.out",
+            overwrite: true,
+          });
+        },
+      });
+    });
+  }
 
   function createHeroAnimation() {
     if (!hero || !heroBox || !heroWord || !heroCursor) return;
@@ -266,7 +285,7 @@ function createAccountButtonAnimation() {
 
     try {
       // TWEAK: Update this URL to your actual production API endpoint if different
-      const response = await fetch('http://localhost:3000/api/reviews'); 
+      const response = await fetch('http://localhost:3000/api/reviews');
       if (response.ok) {
         const apiReviews = await response.json();
         if (apiReviews && apiReviews.length > 0) {
@@ -474,10 +493,10 @@ function createAccountButtonAnimation() {
     allCards.forEach((card, i) => {
       const slot = i - 1 - travel;
       const absSlot = Math.abs(slot);
-      
+
       const x = slot * spacing;
       // Simplified curve to avoid complex float fluctuations
-      const y = (absSlot * absSlot * 0.5) * curve; 
+      const y = (absSlot * absSlot * 0.5) * curve;
       const rotationZ = slot * rotateFactor;
 
       const scale = Math.max(CARD_MIN_SCALE, CARD_MAX_SCALE - absSlot * 0.1);
@@ -487,10 +506,10 @@ function createAccountButtonAnimation() {
           ? 1
           : absSlot <= visibleRange
             ? gsap.utils.clamp(
-                0,
-                1,
-                1 - (absSlot - (visibleRange - 0.35)) / 0.35,
-              )
+              0,
+              1,
+              1 - (absSlot - (visibleRange - 0.35)) / 0.35,
+            )
             : 0;
 
       // Use gsap.set with autoRound: false for high precision
@@ -682,11 +701,11 @@ function createAccountButtonAnimation() {
         /* TWEAK: Increase this value (e.g. * 6) to make the overall scroll duration longer/slower */
         end: `+=${window.innerHeight * 5}px`,
         /* TWEAK: Higher scrub value (e.g. 2.5 or 3) makes the animation "follow" the scroll more slowly/smoothly */
-        scrub: 2.2, 
+        scrub: 2.2,
         pin: true,
         pinSpacing: true,
         invalidateOnRefresh: true,
-        anticipatePin: 1, 
+        anticipatePin: 1,
       },
     });
 
@@ -753,9 +772,9 @@ function createAccountButtonAnimation() {
     tl.to(
       ["#card-1", "#card-3"],
       {
-        y: 15, 
+        y: 15,
         /* TWEAK: Increase/decrease this value to control card scale intensity for side cards */
-        scale: CARD_MAX_SCALE - 0.12, 
+        scale: CARD_MAX_SCALE - 0.12,
         rotationZ: (i) => [-10, 10][i],
         ease: "none", // Remove easing to prevent vibration during scrub
         duration: 0.6,
@@ -943,7 +962,7 @@ function createAccountButtonAnimation() {
     initAnimations();
     initVideoScroll();
     createCareKitAnimation();
-    
+
     // Final check for heights after a brief delay to ensure DOM is settled
     setTimeout(() => {
       ScrollTrigger.refresh();
@@ -1008,5 +1027,20 @@ function createAccountButtonAnimation() {
     }, 250);
   });
 
+  function setupAutoMute() {
+    ScrollTrigger.create({
+      trigger: ".sticky",
+      start: "bottom center",
+      onEnter: () => {
+        document.querySelectorAll(".review-video").forEach((video) => {
+          video.muted = true;
+          const btn = video.closest(".card-back")?.querySelector(".mute-btn");
+          if (btn) btn.classList.remove("unmuted");
+        });
+      },
+    });
+  }
+
+  setupAutoMute();
   ScrollTrigger.refresh();
 });
